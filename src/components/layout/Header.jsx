@@ -37,49 +37,73 @@ export default function Header({
   const [hasInteractedTheme, setHasInteractedTheme] = useState(() => {
     return localStorage.getItem('civitas-theme-interacted') === 'true';
   });
-  const [isPeeking, setIsPeeking] = useState(false);
-  const [showPeek, setShowPeek] = useState(false);
+  const [peekMounted, setPeekMounted] = useState(false);
+  const [peekVisible, setPeekVisible] = useState(false);
 
   useEffect(() => {
+    let enterMountTimer;
+    let enterVisibleTimer;
+    let exitFadeTimer;
+    let exitUnmountTimer;
+
     const wasJustLoggedIn = justLoggedIn || sessionStorage.getItem('civitas-just-logged-in') === 'true';
 
     if (wasJustLoggedIn) {
       sessionStorage.removeItem('civitas-just-logged-in');
-      const enterTimer = setTimeout(() => {
-        setIsPeeking(true);
-        setShowPeek(true);
+
+      // 1. Pasang elemen di DOM
+      enterMountTimer = setTimeout(() => {
+        setPeekMounted(true);
+        // 2. Halus muncul (fade & scale in)
+        enterVisibleTimer = setTimeout(() => {
+          setPeekVisible(true);
+        }, 50);
       }, 350);
 
-      const hideTimer = setTimeout(() => {
-        setIsPeeking(false);
-        setShowPeek(false);
-      }, 3350); // Munculkan 3 detik setelah masuk dashboard
+      // 3. Tampil selama 3 detik penuh, lalu mulai memudar secara smooth (500ms)
+      exitFadeTimer = setTimeout(() => {
+        setPeekVisible(false);
+      }, 3400);
+
+      // 4. Unmount dari DOM setelah animasi fade-out selesai
+      exitUnmountTimer = setTimeout(() => {
+        setPeekMounted(false);
+      }, 4000);
 
       return () => {
-        clearTimeout(enterTimer);
-        clearTimeout(hideTimer);
+        clearTimeout(enterMountTimer);
+        clearTimeout(enterVisibleTimer);
+        clearTimeout(exitFadeTimer);
+        clearTimeout(exitUnmountTimer);
       };
     } else if (!hasInteractedTheme) {
-      const enterTimer = setTimeout(() => {
-        setIsPeeking(true);
-        setShowPeek(true);
+      enterMountTimer = setTimeout(() => {
+        setPeekMounted(true);
+        enterVisibleTimer = setTimeout(() => {
+          setPeekVisible(true);
+        }, 50);
       }, 700);
 
-      const hideTimer = setTimeout(() => {
-        setIsPeeking(false);
-        setShowPeek(false);
-      }, 3700);
+      exitFadeTimer = setTimeout(() => {
+        setPeekVisible(false);
+      }, 3750);
+
+      exitUnmountTimer = setTimeout(() => {
+        setPeekMounted(false);
+      }, 4350);
 
       return () => {
-        clearTimeout(enterTimer);
-        clearTimeout(hideTimer);
+        clearTimeout(enterMountTimer);
+        clearTimeout(enterVisibleTimer);
+        clearTimeout(exitFadeTimer);
+        clearTimeout(exitUnmountTimer);
       };
     }
   }, [justLoggedIn, hasInteractedTheme]);
 
   const dismissPeek = () => {
-    setIsPeeking(false);
-    setShowPeek(false);
+    setPeekVisible(false);
+    setPeekMounted(false);
     if (!hasInteractedTheme) {
       setHasInteractedTheme(true);
       localStorage.setItem('civitas-theme-interacted', 'true');
@@ -252,8 +276,8 @@ export default function Header({
               type="button"
               onClick={handleThemeToggle}
               className={`
-                group relative flex items-center justify-center w-9 h-9 transition-all focus:outline-none cursor-pointer
-                ${isPeeking ? 'animate-peek ring-2 ring-violet-500/40 shadow-md' : ''}
+                group relative flex items-center justify-center w-9 h-9 transition-all duration-300 focus:outline-none cursor-pointer
+                ${peekVisible ? 'animate-peek ring-2 ring-violet-500/40 shadow-md' : ''}
                 ${isClay
                   ? 'clay-btn-secondary rounded-[16px] text-[#7C3AED]'
                   : isNeu
@@ -265,13 +289,14 @@ export default function Header({
               title="Ganti tema tampilan"
               aria-label="Pilih tema"
             >
-              {/* Pulsing indicator badge if peeking */}
-              {isPeeking && (
-                <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-violet-600"></span>
-                </span>
-              )}
+              {/* Pulsing indicator badge with smooth fade */}
+              <span className={`
+                absolute -top-1 -right-1 flex h-2.5 w-2.5 transition-opacity duration-500 pointer-events-none
+                ${peekVisible ? 'opacity-100' : 'opacity-0'}
+              `}>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-violet-600"></span>
+              </span>
 
               {/* Theme Palette Logo Icon */}
               <Palette className={`w-5 h-5 transition-transform duration-300 group-hover:rotate-45 group-hover:scale-110 ${
@@ -285,35 +310,43 @@ export default function Header({
               }`} />
             </button>
 
-            {/* Floating Peek Teaser Tooltip */}
-            {showPeek && !themeDropdownOpen && (
+            {/* Floating Peek Teaser Tooltip with Smooth Transition */}
+            {peekMounted && !themeDropdownOpen && (
               <div 
                 onClick={handleThemeToggle}
-                className="absolute top-full mt-2.5 right-0 z-50 animate-peek-bounce cursor-pointer"
+                className={`
+                  absolute top-full mt-2.5 right-0 z-50 cursor-pointer
+                  transition-all duration-500 ease-out transform
+                  ${peekVisible 
+                    ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' 
+                    : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'}
+                `}
               >
-                <div className={`
-                  flex items-center gap-1.5 px-3 py-1.5 rounded-2xl shadow-xl text-xs font-extrabold whitespace-nowrap transition-transform hover:scale-105 select-none
-                  ${isClay
-                    ? 'bg-gradient-to-r from-[#7C3AED] to-[#DB2777] text-white border border-white/60 shadow-clay-card font-display'
-                    : isNeu
-                      ? 'bg-[#6C63FF] text-white neu-flat font-jakarta'
-                      : isOriginal
-                        ? 'bg-blue-600 text-white shadow-lg font-sans'
-                        : 'bg-[#FBBF24] text-[#1E293B] border-2 border-[#1E293B] shadow-pop-sm font-outfit'}
-                `}>
-                  <Sparkles className="w-3.5 h-3.5 animate-spin text-yellow-300" style={{ animationDuration: '3s' }} />
-                  <span>Coba ganti 4 tema di sini!</span>
-                  {/* Arrow pointing up */}
+                <div className="animate-peek-bounce">
                   <div className={`
-                    absolute -top-1 right-3.5 w-2.5 h-2.5 rotate-45
+                    flex items-center gap-1.5 px-3 py-1.5 rounded-2xl shadow-xl text-xs font-extrabold whitespace-nowrap transition-transform hover:scale-105 select-none
                     ${isClay
-                      ? 'bg-[#7C3AED]'
+                      ? 'bg-gradient-to-r from-[#7C3AED] to-[#DB2777] text-white border border-white/60 shadow-clay-card font-display'
                       : isNeu
-                        ? 'bg-[#6C63FF]'
+                        ? 'bg-[#6C63FF] text-white neu-flat font-jakarta'
                         : isOriginal
-                          ? 'bg-blue-600'
-                          : 'bg-[#FBBF24] border-t-2 border-l-2 border-[#1E293B]'}
-                  `}></div>
+                          ? 'bg-blue-600 text-white shadow-lg font-sans'
+                          : 'bg-[#FBBF24] text-[#1E293B] border-2 border-[#1E293B] shadow-pop-sm font-outfit'}
+                  `}>
+                    <Sparkles className="w-3.5 h-3.5 animate-spin text-yellow-300" style={{ animationDuration: '3s' }} />
+                    <span>Coba ganti 4 tema di sini!</span>
+                    {/* Arrow pointing up */}
+                    <div className={`
+                      absolute -top-1 right-3.5 w-2.5 h-2.5 rotate-45
+                      ${isClay
+                        ? 'bg-[#7C3AED]'
+                        : isNeu
+                          ? 'bg-[#6C63FF]'
+                          : isOriginal
+                            ? 'bg-blue-600'
+                            : 'bg-[#FBBF24] border-t-2 border-l-2 border-[#1E293B]'}
+                    `}></div>
+                  </div>
                 </div>
               </div>
             )}
