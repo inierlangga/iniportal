@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Palette, ChevronDown, Check, User, Hash, GraduationCap, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Palette, ChevronDown, Check, User, Hash, GraduationCap, ArrowRight } from 'lucide-react';
 
 const prodiOptions = [
   { value: 'D-IV Manajemen Keuangan Negara', label: 'Manajemen Keuangan Negara' },
@@ -391,12 +391,6 @@ export default function LoginPage({ theme = 'original', setTheme, onLogin }) {
             </button>
           </div>
         </form>
-
-        {/* Footer Info inside card */}
-        <div className="mt-8 pt-4 border-t border-black/5 text-center flex items-center justify-center gap-1.5 text-[11px] opacity-70">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Layanan Resmi Politeknik Keuangan Negara STAN</span>
-        </div>
       </div>
     </div>
   );

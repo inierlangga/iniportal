@@ -17,8 +17,8 @@ export default function Footer({ theme = 'original' }) {
           </div>
 
           <div className="text-orange-500 font-medium">
-            <span>&copy; {new Date().getFullYear()}, developed by </span>
-            <strong className="font-bold text-orange-600">Unit Sistem Informasi</strong>
+            <span>&copy; Redesign by </span>
+            <strong className="font-bold text-orange-600">Erlangga</strong>
           </div>
         </div>
       </footer>
@@ -44,10 +44,9 @@ export default function Footer({ theme = 'original' }) {
           </div>
 
           <div className="flex items-center gap-1.5 font-medium text-[#635F69]">
-            <span>&copy; {new Date().getFullYear()} Civitas Digital Clay.</span>
-            <span>Dikembangkan oleh</span>
-            <span className="font-black font-display text-[#7C3AED] hover:underline cursor-pointer">
-              Unit Sistem Informasi
+            <span>&copy; Redesign by</span>
+            <span className="font-black font-display text-[#7C3AED]">
+              Erlangga
             </span>
           </div>
         </div>
@@ -74,10 +73,9 @@ export default function Footer({ theme = 'original' }) {
           </div>
 
           <div className="flex items-center gap-1.5 font-medium">
-            <span>&copy; {new Date().getFullYear()} Civitas.</span>
-            <span>Dikembangkan oleh</span>
-            <span className="font-bold font-jakarta text-[#6C63FF] hover:underline cursor-pointer">
-              Unit Sistem Informasi
+            <span>&copy; Redesign by</span>
+            <span className="font-bold font-jakarta text-[#6C63FF]">
+              Erlangga
             </span>
           </div>
         </div>
@@ -104,10 +102,9 @@ export default function Footer({ theme = 'original' }) {
         </div>
 
         <div className="flex items-center gap-1.5 text-[#64748B] font-bold">
-          <span>&copy; {new Date().getFullYear()} Civitas.</span>
-          <span>Dibuat oleh</span>
-          <span className="font-extrabold font-outfit text-[#8B5CF6] hover:underline cursor-pointer">
-            Unit Sistem Informasi
+          <span>&copy; Redesign by</span>
+          <span className="font-extrabold font-outfit text-[#8B5CF6]">
+            Erlangga
           </span>
         </div>
       </div>

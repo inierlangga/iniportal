@@ -10,7 +10,8 @@ import {
   PanelLeftClose, 
   PanelLeft, 
   Palette, 
-  Check 
+  Check,
+  Sparkles 
 } from 'lucide-react';
 import { currentUser as defaultUser } from '../../data/mockData';
 
@@ -30,6 +31,29 @@ export default function Header({
   const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const themeDropdownRef = useRef(null);
+
+  const [hasInteractedTheme, setHasInteractedTheme] = useState(() => {
+    return localStorage.getItem('civitas-theme-interacted') === 'true';
+  });
+  const [showPeek, setShowPeek] = useState(false);
+
+  useEffect(() => {
+    if (!hasInteractedTheme) {
+      const timer = setTimeout(() => {
+        setShowPeek(true);
+      }, 700);
+      return () => clearTimeout(timer);
+    }
+  }, [hasInteractedTheme]);
+
+  const handleThemeToggle = () => {
+    setThemeDropdownOpen((prev) => !prev);
+    if (!hasInteractedTheme) {
+      setHasInteractedTheme(true);
+      setShowPeek(false);
+      localStorage.setItem('civitas-theme-interacted', 'true');
+    }
+  };
 
   const isOriginal = theme === 'original';
   const isClay = theme === 'claymorphism';
@@ -59,7 +83,7 @@ export default function Header({
 
   return (
     <header className={`
-      sticky top-0 z-30 w-full transition-all duration-200
+      fixed top-0 left-0 right-0 z-30 w-full transition-all duration-200
       ${isClay
         ? 'bg-[#F4F1FA]/85 backdrop-blur-xl border-b border-white/60 shadow-clay-card font-dmsans text-[#332F3A]'
         : isNeu
@@ -190,9 +214,10 @@ export default function Header({
           <div className="relative" ref={themeDropdownRef}>
             <button
               type="button"
-              onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
+              onClick={handleThemeToggle}
               className={`
-                flex items-center gap-2 px-3 py-1.5 text-xs font-bold transition-all focus:outline-none
+                group relative flex items-center gap-2 px-3 py-1.5 text-xs font-bold transition-all focus:outline-none cursor-pointer
+                ${!hasInteractedTheme ? 'animate-peek ring-2 ring-violet-500/40 shadow-md' : ''}
                 ${isClay
                   ? 'clay-btn-secondary rounded-[20px] text-[#332F3A]'
                   : isNeu
@@ -203,7 +228,15 @@ export default function Header({
               `}
               title="Ganti tema tampilan"
             >
-              <Palette className={`w-3.5 h-3.5 ${isClay ? 'text-[#7C3AED]' : isNeu ? 'text-[#6C63FF]' : isPlayful ? 'text-white' : 'text-blue-600'}`} />
+              {/* Pulsing indicator badge if user hasn't interacted yet */}
+              {!hasInteractedTheme && (
+                <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-violet-600"></span>
+                </span>
+              )}
+
+              <Palette className={`w-3.5 h-3.5 transition-transform duration-300 group-hover:rotate-45 group-hover:scale-110 ${isClay ? 'text-[#7C3AED]' : isNeu ? 'text-[#6C63FF]' : isPlayful ? 'text-white' : 'text-blue-600'}`} />
               <span className="hidden sm:inline">Tema:</span>
               <span className="font-extrabold capitalize">
                 {theme === 'original' 
@@ -214,8 +247,41 @@ export default function Header({
                       ? 'Neumorphic' 
                       : 'Playful'}
               </span>
-              <ChevronDown className="w-3.5 h-3.5 opacity-90" />
+              <ChevronDown className="w-3.5 h-3.5 opacity-90 transition-transform duration-200 group-hover:translate-y-0.5" />
             </button>
+
+            {/* Floating Peek Teaser Tooltip */}
+            {showPeek && !themeDropdownOpen && (
+              <div 
+                onClick={handleThemeToggle}
+                className="absolute top-full mt-2.5 right-0 z-50 animate-peek-bounce cursor-pointer"
+              >
+                <div className={`
+                  flex items-center gap-1.5 px-3 py-1.5 rounded-2xl shadow-xl text-xs font-extrabold whitespace-nowrap transition-transform hover:scale-105 select-none
+                  ${isClay
+                    ? 'bg-gradient-to-r from-[#7C3AED] to-[#DB2777] text-white border border-white/60 shadow-clay-card font-display'
+                    : isNeu
+                      ? 'bg-[#6C63FF] text-white neu-flat font-jakarta'
+                      : isOriginal
+                        ? 'bg-blue-600 text-white shadow-lg font-sans'
+                        : 'bg-[#FBBF24] text-[#1E293B] border-2 border-[#1E293B] shadow-pop-sm font-outfit'}
+                `}>
+                  <Sparkles className="w-3.5 h-3.5 animate-spin text-yellow-300" style={{ animationDuration: '3s' }} />
+                  <span>Coba ganti 4 tema di sini!</span>
+                  {/* Arrow pointing up */}
+                  <div className={`
+                    absolute -top-1 right-6 w-2.5 h-2.5 rotate-45
+                    ${isClay
+                      ? 'bg-[#7C3AED]'
+                      : isNeu
+                        ? 'bg-[#6C63FF]'
+                        : isOriginal
+                          ? 'bg-blue-600'
+                          : 'bg-[#FBBF24] border-t-2 border-l-2 border-[#1E293B]'}
+                  `}></div>
+                </div>
+              </div>
+            )}
 
             {themeDropdownOpen && (
               <div className={`
@@ -236,6 +302,11 @@ export default function Header({
                     onClick={() => {
                       setTheme(opt.id);
                       setThemeDropdownOpen(false);
+                      if (!hasInteractedTheme) {
+                        setHasInteractedTheme(true);
+                        setShowPeek(false);
+                        localStorage.setItem('civitas-theme-interacted', 'true');
+                      }
                     }}
                     className={`
                       w-full flex items-center justify-between px-3 py-2 text-xs font-bold transition-all text-left mb-1

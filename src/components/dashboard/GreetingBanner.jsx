@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Calendar, LineChart } from 'lucide-react';
+import { Calendar, LineChart } from 'lucide-react';
 import { currentUser as defaultUser } from '../../data/mockData';
 
 export default function GreetingBanner({ theme = 'original', currentUser = defaultUser }) {
@@ -46,15 +46,9 @@ export default function GreetingBanner({ theme = 'original', currentUser = defau
       <div className="space-y-5 font-dmsans text-[#332F3A]">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-black text-[#332F3A] font-display tracking-tight">
-                Dashboard Mahasiswa
-              </h1>
-              <span className="bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 px-3.5 py-1 rounded-full text-xs font-black font-display flex items-center gap-1.5 shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
-                {currentUser.status}
-              </span>
-            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#332F3A] font-display tracking-tight">
+              Dashboard Mahasiswa
+            </h1>
             <p className="text-xs sm:text-sm text-[#635F69] font-medium mt-1">
               {currentUser.semester} • Tahun Akademik {currentUser.academicYear}
             </p>
@@ -98,15 +92,9 @@ export default function GreetingBanner({ theme = 'original', currentUser = defau
       <div className="space-y-5 font-dmsans text-[#3D4852]">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3D4852] font-jakarta tracking-tight">
-                Dashboard Mahasiswa
-              </h1>
-              <span className="neu-inset-sm px-3 py-1 rounded-full text-xs font-bold text-[#38B2AC] flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#38B2AC] shadow-xs"></span>
-                {currentUser.status}
-              </span>
-            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3D4852] font-jakarta tracking-tight">
+              Dashboard Mahasiswa
+            </h1>
             <p className="text-xs sm:text-sm text-[#6B7280] font-medium mt-1">
               {currentUser.semester} • Tahun Akademik {currentUser.academicYear}
             </p>
@@ -125,11 +113,6 @@ export default function GreetingBanner({ theme = 'original', currentUser = defau
 
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="space-y-3 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full neu-inset-sm text-xs font-bold text-[#6C63FF] font-jakarta">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Portal Akademik Terpadu</span>
-              </div>
-              
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#3D4852] font-jakarta tracking-tight leading-snug">
                 Selamat Datang Kembali, <br />
                 <span className="text-[#6C63FF] font-black">{currentUser.name}</span>
@@ -155,15 +138,9 @@ export default function GreetingBanner({ theme = 'original', currentUser = defau
     <div className="space-y-4 font-jakarta">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2.5">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1E293B] font-outfit tracking-tight">
               Dashboard Mahasiswa
             </h1>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold font-outfit bg-[#34D399] text-[#1E293B] border-2 border-[#1E293B] shadow-pop-sm">
-              <span className="w-2 h-2 rounded-full bg-[#1E293B]"></span>
-              {currentUser.status}
-            </span>
-          </div>
           <p className="text-xs sm:text-sm font-semibold text-[#64748B] mt-0.5">
             {currentUser.semester} • Tahun Akademik {currentUser.academicYear}
           </p>
@@ -182,11 +159,6 @@ export default function GreetingBanner({ theme = 'original', currentUser = defau
 
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="space-y-2.5 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#8B5CF6] text-white border-2 border-[#1E293B] shadow-pop-sm text-xs font-extrabold font-outfit">
-              <Sparkles className="w-3.5 h-3.5 text-[#FBBF24]" />
-              <span>Halo Civitas!</span>
-            </div>
-            
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#1E293B] font-outfit tracking-tight leading-snug">
               Selamat Datang Kembali, <br />
               <span className="text-[#8B5CF6] underline decoration-wavy decoration-[#F472B6]">

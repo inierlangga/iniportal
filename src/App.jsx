@@ -121,7 +121,7 @@ export default function App() {
       />
 
       {/* Main Body Layout */}
-      <div className="flex-1 flex relative z-10">
+      <div className="flex-1 flex relative z-10 pt-16">
         
         {/* Left Sidebar */}
         <Sidebar

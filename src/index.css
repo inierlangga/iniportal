@@ -315,3 +315,45 @@
   left: 100%;
   top: 0;
 }
+
+/* ===================================================
+   THEME SELECTOR PEEK ANIMATION
+   =================================================== */
+@keyframes peek-wiggle {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  15% {
+    transform: rotate(-6deg) scale(1.05);
+  }
+  30% {
+    transform: rotate(6deg) scale(1.05);
+  }
+  45% {
+    transform: rotate(-3deg) scale(1.03);
+  }
+  60% {
+    transform: rotate(3deg) scale(1.03);
+  }
+  75% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.animate-peek {
+  animation: peek-wiggle 2.2s ease-in-out infinite;
+}
+
+@keyframes peek-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-peek-bounce {
+  animation: peek-bounce 1.5s ease-in-out infinite;
+}
+
