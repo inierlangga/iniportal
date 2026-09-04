@@ -26,7 +26,8 @@ export default function Header({
   unreadNotificationCount = 5,
   onOpenNotifications,
   currentUser = defaultUser,
-  onLogout
+  onLogout,
+  justLoggedIn = false
 }) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
@@ -36,24 +37,58 @@ export default function Header({
   const [hasInteractedTheme, setHasInteractedTheme] = useState(() => {
     return localStorage.getItem('civitas-theme-interacted') === 'true';
   });
+  const [isPeeking, setIsPeeking] = useState(false);
   const [showPeek, setShowPeek] = useState(false);
 
   useEffect(() => {
-    if (!hasInteractedTheme) {
-      const timer = setTimeout(() => {
+    const wasJustLoggedIn = justLoggedIn || sessionStorage.getItem('civitas-just-logged-in') === 'true';
+
+    if (wasJustLoggedIn) {
+      sessionStorage.removeItem('civitas-just-logged-in');
+      const enterTimer = setTimeout(() => {
+        setIsPeeking(true);
+        setShowPeek(true);
+      }, 350);
+
+      const hideTimer = setTimeout(() => {
+        setIsPeeking(false);
+        setShowPeek(false);
+      }, 3350); // Munculkan 3 detik setelah masuk dashboard
+
+      return () => {
+        clearTimeout(enterTimer);
+        clearTimeout(hideTimer);
+      };
+    } else if (!hasInteractedTheme) {
+      const enterTimer = setTimeout(() => {
+        setIsPeeking(true);
         setShowPeek(true);
       }, 700);
-      return () => clearTimeout(timer);
+
+      const hideTimer = setTimeout(() => {
+        setIsPeeking(false);
+        setShowPeek(false);
+      }, 3700);
+
+      return () => {
+        clearTimeout(enterTimer);
+        clearTimeout(hideTimer);
+      };
     }
-  }, [hasInteractedTheme]);
+  }, [justLoggedIn, hasInteractedTheme]);
+
+  const dismissPeek = () => {
+    setIsPeeking(false);
+    setShowPeek(false);
+    if (!hasInteractedTheme) {
+      setHasInteractedTheme(true);
+      localStorage.setItem('civitas-theme-interacted', 'true');
+    }
+  };
 
   const handleThemeToggle = () => {
     setThemeDropdownOpen((prev) => !prev);
-    if (!hasInteractedTheme) {
-      setHasInteractedTheme(true);
-      setShowPeek(false);
-      localStorage.setItem('civitas-theme-interacted', 'true');
-    }
+    dismissPeek();
   };
 
   const isOriginal = theme === 'original';
@@ -218,7 +253,7 @@ export default function Header({
               onClick={handleThemeToggle}
               className={`
                 group relative flex items-center justify-center w-9 h-9 transition-all focus:outline-none cursor-pointer
-                ${!hasInteractedTheme ? 'animate-peek ring-2 ring-violet-500/40 shadow-md' : ''}
+                ${isPeeking ? 'animate-peek ring-2 ring-violet-500/40 shadow-md' : ''}
                 ${isClay
                   ? 'clay-btn-secondary rounded-[16px] text-[#7C3AED]'
                   : isNeu
@@ -230,8 +265,8 @@ export default function Header({
               title="Ganti tema tampilan"
               aria-label="Pilih tema"
             >
-              {/* Pulsing indicator badge if user hasn't interacted yet */}
-              {!hasInteractedTheme && (
+              {/* Pulsing indicator badge if peeking */}
+              {isPeeking && (
                 <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-violet-600"></span>
@@ -270,7 +305,7 @@ export default function Header({
                   <span>Coba ganti 4 tema di sini!</span>
                   {/* Arrow pointing up */}
                   <div className={`
-                    absolute -top-1 right-6 w-2.5 h-2.5 rotate-45
+                    absolute -top-1 right-3.5 w-2.5 h-2.5 rotate-45
                     ${isClay
                       ? 'bg-[#7C3AED]'
                       : isNeu
@@ -302,11 +337,7 @@ export default function Header({
                     onClick={() => {
                       setTheme(opt.id);
                       setThemeDropdownOpen(false);
-                      if (!hasInteractedTheme) {
-                        setHasInteractedTheme(true);
-                        setShowPeek(false);
-                        localStorage.setItem('civitas-theme-interacted', 'true');
-                      }
+                      dismissPeek();
                     }}
                     className={`
                       w-full flex items-center justify-between px-3 py-2 text-xs font-bold transition-all text-left mb-1

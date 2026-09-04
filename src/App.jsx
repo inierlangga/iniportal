@@ -43,6 +43,7 @@ export default function App() {
   // Modals state
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
 
   // Persist theme choice
   useEffect(() => {
@@ -58,13 +59,17 @@ export default function App() {
     };
     setUser(updatedUser);
     setIsLoggedIn(true);
+    setJustLoggedIn(true);
+    sessionStorage.setItem('civitas-just-logged-in', 'true');
     localStorage.setItem('civitas-is-logged-in', 'true');
     localStorage.setItem('civitas-user-profile', JSON.stringify(updatedUser));
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setJustLoggedIn(false);
     localStorage.removeItem('civitas-is-logged-in');
+    sessionStorage.removeItem('civitas-just-logged-in');
     setActiveMenuItem('beranda');
   };
 
@@ -118,6 +123,7 @@ export default function App() {
         onOpenNotifications={() => setNotificationModalOpen(true)}
         currentUser={user}
         onLogout={handleLogout}
+        justLoggedIn={justLoggedIn}
       />
 
       {/* Main Body Layout */}
