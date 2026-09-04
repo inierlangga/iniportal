@@ -19,10 +19,8 @@ export default function App() {
     return saved;
   });
 
-  // Authentication & Dynamic User Profile State
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem('civitas-is-logged-in') === 'true';
-  });
+  // Authentication & Dynamic User Profile State - Selalu login ulang setiap kali masuk/refresh web
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('civitas-user-profile');
@@ -45,6 +43,13 @@ export default function App() {
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
   const [justLoggedIn, setJustLoggedIn] = useState(false);
 
+  // Bersihkan penanda sesi lama agar proses login & theme peek selalu mulai dari awal setiap masuk web
+  useEffect(() => {
+    localStorage.removeItem('civitas-is-logged-in');
+    localStorage.removeItem('civitas-theme-interacted');
+    sessionStorage.removeItem('civitas-just-logged-in');
+  }, []);
+
   // Persist theme choice
   useEffect(() => {
     localStorage.setItem('civitas-theme', theme);
@@ -61,14 +66,12 @@ export default function App() {
     setIsLoggedIn(true);
     setJustLoggedIn(true);
     sessionStorage.setItem('civitas-just-logged-in', 'true');
-    localStorage.setItem('civitas-is-logged-in', 'true');
     localStorage.setItem('civitas-user-profile', JSON.stringify(updatedUser));
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setJustLoggedIn(false);
-    localStorage.removeItem('civitas-is-logged-in');
     sessionStorage.removeItem('civitas-just-logged-in');
     setActiveMenuItem('beranda');
   };

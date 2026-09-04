@@ -18,27 +18,29 @@ export default function LoginPage({ theme = 'original', setTheme, onLogin }) {
   const themeDropdownRef = useRef(null);
   const prodiDropdownRef = useRef(null);
 
-  const [hasInteractedTheme, setHasInteractedTheme] = useState(() => {
-    return localStorage.getItem('civitas-theme-interacted') === 'true';
-  });
-  const [showPeek, setShowPeek] = useState(false);
+  const [hasInteractedTheme, setHasInteractedTheme] = useState(false);
+  const [peekMounted, setPeekMounted] = useState(false);
+  const [peekVisible, setPeekVisible] = useState(false);
 
   useEffect(() => {
     if (!hasInteractedTheme) {
-      const timer = setTimeout(() => {
-        setShowPeek(true);
+      const mountTimer = setTimeout(() => {
+        setPeekMounted(true);
+        setTimeout(() => setPeekVisible(true), 50);
       }, 700);
-      return () => clearTimeout(timer);
+      return () => clearTimeout(mountTimer);
     }
   }, [hasInteractedTheme]);
 
+  const dismissPeek = () => {
+    setPeekVisible(false);
+    setTimeout(() => setPeekMounted(false), 500);
+    setHasInteractedTheme(true);
+  };
+
   const handleThemeToggle = () => {
     setThemeDropdownOpen((prev) => !prev);
-    if (!hasInteractedTheme) {
-      setHasInteractedTheme(true);
-      setShowPeek(false);
-      localStorage.setItem('civitas-theme-interacted', 'true');
-    }
+    dismissPeek();
   };
 
   const isOriginal = theme === 'original';
@@ -117,8 +119,8 @@ export default function LoginPage({ theme = 'original', setTheme, onLogin }) {
           type="button"
           onClick={handleThemeToggle}
           className={`
-            group relative flex items-center justify-center w-10 h-10 transition-all focus:outline-none cursor-pointer
-            ${!hasInteractedTheme ? 'animate-peek ring-2 ring-violet-500/40 shadow-md' : ''}
+            group relative flex items-center justify-center w-10 h-10 transition-all duration-300 focus:outline-none cursor-pointer
+            ${peekVisible ? 'animate-peek ring-2 ring-violet-500/40 shadow-md' : ''}
             ${isClay
               ? 'clay-btn-secondary rounded-[16px] text-[#7C3AED]'
               : isNeu
@@ -130,48 +132,57 @@ export default function LoginPage({ theme = 'original', setTheme, onLogin }) {
           title="Ganti tema tampilan"
           aria-label="Pilih tema"
         >
-          {/* Pulsing indicator badge if user hasn't interacted yet */}
-          {!hasInteractedTheme && (
-            <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-violet-600"></span>
-            </span>
-          )}
+          {/* Pulsing indicator badge with smooth fade */}
+          <span className={`
+            absolute -top-1 -right-1 flex h-2.5 w-2.5 transition-opacity duration-500 pointer-events-none
+            ${peekVisible ? 'opacity-100' : 'opacity-0'}
+          `}>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-violet-600"></span>
+          </span>
 
           <Palette className={`w-5 h-5 transition-transform duration-300 group-hover:rotate-45 group-hover:scale-110 ${
             isClay ? 'text-[#7C3AED]' : isNeu ? 'text-[#6C63FF]' : isPlayful ? 'text-white' : 'text-[#3f6ad8]'
           }`} />
         </button>
 
-        {/* Floating Peek Teaser Tooltip */}
-        {showPeek && !themeDropdownOpen && (
+        {/* Floating Peek Teaser Tooltip with Smooth Transition */}
+        {peekMounted && !themeDropdownOpen && (
           <div 
             onClick={handleThemeToggle}
-            className="absolute top-full mt-2.5 right-0 z-50 animate-peek-bounce cursor-pointer"
+            className={`
+              absolute top-full mt-2.5 right-0 z-50 cursor-pointer
+              transition-all duration-500 ease-out transform
+              ${peekVisible 
+                ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' 
+                : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'}
+            `}
           >
-            <div className={`
-              flex items-center gap-1.5 px-3 py-1.5 rounded-2xl shadow-xl text-xs font-extrabold whitespace-nowrap transition-transform hover:scale-105 select-none
-              ${isClay
-                ? 'bg-gradient-to-r from-[#7C3AED] to-[#DB2777] text-white border border-white/60 shadow-clay-card font-display'
-                : isNeu
-                  ? 'bg-[#6C63FF] text-white neu-flat font-jakarta'
-                  : isOriginal
-                    ? 'bg-blue-600 text-white shadow-lg font-sans'
-                    : 'bg-[#FBBF24] text-[#1E293B] border-2 border-[#1E293B] shadow-pop-sm font-outfit'}
-            `}>
-              <Sparkles className="w-3.5 h-3.5 animate-spin text-yellow-300" style={{ animationDuration: '3s' }} />
-              <span>Coba ganti 4 tema di sini!</span>
-              {/* Arrow pointing up */}
+            <div className="animate-peek-bounce">
               <div className={`
-                absolute -top-1 right-6 w-2.5 h-2.5 rotate-45
+                flex items-center gap-1.5 px-3 py-1.5 rounded-2xl shadow-xl text-xs font-extrabold whitespace-nowrap transition-transform hover:scale-105 select-none
                 ${isClay
-                  ? 'bg-[#7C3AED]'
+                  ? 'bg-gradient-to-r from-[#7C3AED] to-[#DB2777] text-white border border-white/60 shadow-clay-card font-display'
                   : isNeu
-                    ? 'bg-[#6C63FF]'
+                    ? 'bg-[#6C63FF] text-white neu-flat font-jakarta'
                     : isOriginal
-                      ? 'bg-blue-600'
-                      : 'bg-[#FBBF24] border-t-2 border-l-2 border-[#1E293B]'}
-              `}></div>
+                      ? 'bg-blue-600 text-white shadow-lg font-sans'
+                      : 'bg-[#FBBF24] text-[#1E293B] border-2 border-[#1E293B] shadow-pop-sm font-outfit'}
+              `}>
+                <Sparkles className="w-3.5 h-3.5 animate-spin text-yellow-300" style={{ animationDuration: '3s' }} />
+                <span>Coba ganti 4 tema di sini!</span>
+                {/* Arrow pointing up */}
+                <div className={`
+                  absolute -top-1 right-3.5 w-2.5 h-2.5 rotate-45
+                  ${isClay
+                    ? 'bg-[#7C3AED]'
+                    : isNeu
+                      ? 'bg-[#6C63FF]'
+                      : isOriginal
+                        ? 'bg-blue-600'
+                        : 'bg-[#FBBF24] border-t-2 border-l-2 border-[#1E293B]'}
+                `}></div>
+              </div>
             </div>
           </div>
         )}
@@ -195,11 +206,7 @@ export default function LoginPage({ theme = 'original', setTheme, onLogin }) {
                 onClick={() => {
                   setTheme(opt.id);
                   setThemeDropdownOpen(false);
-                  if (!hasInteractedTheme) {
-                    setHasInteractedTheme(true);
-                    setShowPeek(false);
-                    localStorage.setItem('civitas-theme-interacted', 'true');
-                  }
+                  dismissPeek();
                 }}
                 className={`
                   w-full flex items-center justify-between px-3 py-2 text-xs font-bold transition-all text-left mb-1

@@ -34,9 +34,7 @@ export default function Header({
   const dropdownRef = useRef(null);
   const themeDropdownRef = useRef(null);
 
-  const [hasInteractedTheme, setHasInteractedTheme] = useState(() => {
-    return localStorage.getItem('civitas-theme-interacted') === 'true';
-  });
+  const [hasInteractedTheme, setHasInteractedTheme] = useState(false);
   const [peekMounted, setPeekMounted] = useState(false);
   const [peekVisible, setPeekVisible] = useState(false);
 
@@ -104,10 +102,7 @@ export default function Header({
   const dismissPeek = () => {
     setPeekVisible(false);
     setPeekMounted(false);
-    if (!hasInteractedTheme) {
-      setHasInteractedTheme(true);
-      localStorage.setItem('civitas-theme-interacted', 'true');
-    }
+    setHasInteractedTheme(true);
   };
 
   const handleThemeToggle = () => {
