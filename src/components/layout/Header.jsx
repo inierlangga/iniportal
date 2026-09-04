@@ -11,7 +11,8 @@ import {
   PanelLeft, 
   Palette, 
   Check,
-  Sparkles 
+  Sparkles,
+  MoreVertical 
 } from 'lucide-react';
 import { currentUser as defaultUser } from '../../data/mockData';
 
@@ -101,18 +102,18 @@ export default function Header({
             type="button"
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className={`
-              p-2 lg:hidden transition-all focus:outline-none
+              p-1.5 lg:hidden transition-all focus:outline-none cursor-pointer
               ${isClay
-                ? 'clay-btn-secondary rounded-[18px] text-[#7C3AED]'
+                ? 'clay-btn-secondary rounded-[16px] text-[#7C3AED]'
                 : isNeu
-                  ? 'neu-btn rounded-2xl text-[#3D4852]'
+                  ? 'neu-btn rounded-xl text-[#3D4852]'
                   : isOriginal
-                    ? 'p-2 text-[#3f6ad8] hover:bg-black/5 rounded-md'
-                    : 'bg-white border-2 border-[#1E293B] shadow-pop-sm btn-candy rounded-full text-[#1E293B]'}
+                    ? 'text-[#3f6ad8] hover:bg-black/5 rounded-md p-1'
+                    : 'bg-white border-2 border-[#1E293B] shadow-pop-sm btn-candy rounded-xl text-[#1E293B]'}
             `}
             aria-label="Toggle mobile menu"
           >
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6 stroke-[2.5]" />}
           </button>
 
           {/* Desktop Sidebar Collapse Toggle */}
@@ -120,7 +121,7 @@ export default function Header({
             type="button"
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             className={`
-              hidden lg:flex p-2 transition-all focus:outline-none
+              hidden lg:flex p-2 transition-all focus:outline-none cursor-pointer
               ${isClay
                 ? 'clay-btn-secondary rounded-[18px] text-[#7C3AED]'
                 : isNeu
@@ -139,8 +140,8 @@ export default function Header({
             )}
           </button>
 
-          {/* Brand Logo & Name */}
-          <div className="flex items-center gap-2.5 select-none">
+          {/* Brand Logo & Name: Only shown on desktop, hidden on mobile like web aslinya */}
+          <div className="hidden lg:flex items-center gap-2.5 select-none">
             {isClay ? (
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 rounded-[18px] clay-orb bg-gradient-to-br from-[#A78BFA] to-[#7C3AED] flex items-center justify-center">
@@ -216,17 +217,18 @@ export default function Header({
               type="button"
               onClick={handleThemeToggle}
               className={`
-                group relative flex items-center gap-2 px-3 py-1.5 text-xs font-bold transition-all focus:outline-none cursor-pointer
+                group relative flex items-center justify-center w-9 h-9 transition-all focus:outline-none cursor-pointer
                 ${!hasInteractedTheme ? 'animate-peek ring-2 ring-violet-500/40 shadow-md' : ''}
                 ${isClay
-                  ? 'clay-btn-secondary rounded-[20px] text-[#332F3A]'
+                  ? 'clay-btn-secondary rounded-[16px] text-[#7C3AED]'
                   : isNeu
-                    ? 'neu-btn rounded-2xl text-[#3D4852]'
+                    ? 'neu-btn rounded-xl text-[#6C63FF]'
                     : isOriginal
-                      ? 'bg-white/80 hover:bg-white text-slate-700 border border-slate-300 shadow-xs rounded-md'
-                      : 'bg-[#8B5CF6] text-white border-2 border-[#1E293B] shadow-pop-sm btn-candy rounded-full font-outfit'}
+                      ? 'bg-white hover:bg-slate-50 text-[#3f6ad8] border border-slate-300 shadow-xs rounded-md'
+                      : 'bg-[#8B5CF6] text-white border-2 border-[#1E293B] shadow-pop-sm btn-candy rounded-xl'}
               `}
               title="Ganti tema tampilan"
+              aria-label="Pilih tema"
             >
               {/* Pulsing indicator badge if user hasn't interacted yet */}
               {!hasInteractedTheme && (
@@ -236,18 +238,16 @@ export default function Header({
                 </span>
               )}
 
-              <Palette className={`w-3.5 h-3.5 transition-transform duration-300 group-hover:rotate-45 group-hover:scale-110 ${isClay ? 'text-[#7C3AED]' : isNeu ? 'text-[#6C63FF]' : isPlayful ? 'text-white' : 'text-blue-600'}`} />
-              <span className="hidden sm:inline">Tema:</span>
-              <span className="font-extrabold capitalize">
-                {theme === 'original' 
-                  ? 'Original (Klasik)' 
-                  : theme === 'claymorphism'
-                    ? 'Claymorphism'
-                    : theme === 'neumorphic' 
-                      ? 'Neumorphic' 
-                      : 'Playful'}
-              </span>
-              <ChevronDown className="w-3.5 h-3.5 opacity-90 transition-transform duration-200 group-hover:translate-y-0.5" />
+              {/* Theme Palette Logo Icon */}
+              <Palette className={`w-5 h-5 transition-transform duration-300 group-hover:rotate-45 group-hover:scale-110 ${
+                isClay 
+                  ? 'text-[#7C3AED]' 
+                  : isNeu 
+                    ? 'text-[#6C63FF]' 
+                    : isPlayful 
+                      ? 'text-white' 
+                      : 'text-[#3f6ad8]'
+              }`} />
             </button>
 
             {/* Floating Peek Teaser Tooltip */}
@@ -285,9 +285,9 @@ export default function Header({
 
             {themeDropdownOpen && (
               <div className={`
-                absolute right-0 mt-2 w-64 p-2 z-50 animate-in fade-in duration-100
+                absolute right-0 mt-2 w-64 p-2 z-50 animate-in fade-in duration-100 shadow-2xl
                 ${isClay
-                  ? 'bg-[#F4F1FA] clay-card rounded-[24px] border border-white/80 shadow-clay-card text-[#332F3A]'
+                  ? '!bg-[#F4F1FA] rounded-[24px] border-2 border-white shadow-2xl text-[#332F3A]'
                   : isNeu
                     ? 'bg-[#E0E5EC] neu-flat rounded-2xl font-dmsans text-[#3D4852]'
                     : isOriginal
@@ -336,16 +336,17 @@ export default function Header({
             )}
           </div>
 
-          {/* Quick Notification Bell */}
+          {/* Quick Notification Bell (shown on sm+ for original, and all for others) */}
           <button
             type="button"
             onClick={onOpenNotifications}
             className={`
-              relative p-2 transition-all focus:outline-none
+              relative p-2 transition-all focus:outline-none cursor-pointer
+              ${isOriginal ? 'hidden sm:flex' : 'flex'}
               ${isClay
-                ? 'clay-btn-secondary rounded-[18px] text-[#332F3A]'
+                ? 'clay-btn-secondary rounded-[16px] text-[#332F3A]'
                 : isNeu
-                  ? 'neu-btn rounded-2xl text-[#3D4852]'
+                  ? 'neu-btn rounded-xl text-[#3D4852]'
                   : isOriginal
                     ? 'text-slate-600 hover:bg-black/5 rounded-full'
                     : 'bg-white border-2 border-[#1E293B] shadow-pop-sm btn-candy rounded-full text-[#1E293B]'}
@@ -375,72 +376,101 @@ export default function Header({
               type="button"
               onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
               className={`
-                flex items-center gap-2.5 p-1 transition-all focus:outline-none
+                flex items-center transition-all focus:outline-none cursor-pointer
                 ${isClay
-                  ? 'clay-btn-secondary rounded-[20px] pl-1.5 pr-3 py-1 text-[#332F3A]'
+                  ? 'clay-btn-secondary rounded-[16px] p-1 md:pl-1.5 md:pr-3 md:py-1 text-[#332F3A] gap-2.5'
                   : isNeu
-                    ? 'neu-btn rounded-2xl pl-1.5 pr-3 py-1 text-[#3D4852]'
+                    ? 'neu-btn rounded-xl p-1 md:pl-1.5 md:pr-3 md:py-1 text-[#3D4852] gap-2.5'
                     : isOriginal
-                      ? 'hover:bg-black/5 rounded-md px-2'
-                      : 'bg-white border-2 border-[#1E293B] shadow-pop-sm btn-candy rounded-full pl-1 pr-2.5 py-1'}
+                      ? 'hover:bg-black/5 rounded-md p-0 lg:px-2 lg:py-1 lg:gap-2'
+                      : 'bg-white border-2 border-[#1E293B] shadow-pop-sm btn-candy rounded-xl md:rounded-full p-1 md:pl-1 md:pr-2.5 md:py-1 gap-2.5'}
               `}
               aria-expanded={profileDropdownOpen}
+              title="Profil Pengguna"
             >
-              <div className="relative">
-                <img
-                  src={currentUser.avatar}
-                  alt={currentUser.name}
-                  className={`
-                    w-8 h-8 object-cover
-                    ${isClay
-                      ? 'rounded-[14px] shadow-xs'
-                      : isNeu
-                        ? 'rounded-xl'
-                        : isOriginal
-                          ? 'rounded-full border border-slate-300'
-                          : 'rounded-full border-2 border-[#1E293B]'}
-                  `}
-                  onError={(e) => {
-                    e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80";
-                  }}
-                />
-                {isClay && (
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#10B981] border-2 border-[#F4F1FA]"></span>
-                )}
-                {isNeu && (
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#38B2AC] border-2 border-[#E0E5EC]"></span>
-                )}
-                {isPlayful && (
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#34D399] border-2 border-[#1E293B]"></span>
-                )}
-              </div>
+              {/* For isOriginal on mobile: render the blue 3-dots button from web aslinya! */}
+              {isOriginal ? (
+                <>
+                  <div className="lg:hidden w-8 h-8 rounded bg-[#3f6ad8] hover:bg-[#3459b8] text-white flex items-center justify-center shadow-xs">
+                    <MoreVertical className="w-4 h-4" />
+                  </div>
+                  <div className="hidden lg:flex items-center gap-2">
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name}
+                      className="w-8 h-8 rounded-full border border-slate-300 object-cover"
+                      onError={(e) => {
+                        e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80";
+                      }}
+                    />
+                    <div className="text-left">
+                      <div className="text-xs font-bold text-slate-800 line-clamp-1 max-w-[150px]">
+                        {currentUser.name}
+                      </div>
+                      <div className="text-[11px] text-slate-500 truncate max-w-[150px]">
+                        {currentUser.nim}
+                      </div>
+                    </div>
+                    <ChevronDown className="w-4 h-4 transition-transform duration-200 text-[#635F69]" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="relative">
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name}
+                      className={`
+                        w-8 h-8 object-cover
+                        ${isClay
+                          ? 'rounded-[12px] shadow-xs'
+                          : isNeu
+                            ? 'rounded-xl'
+                            : 'rounded-lg border-2 border-[#1E293B]'}
+                      `}
+                      onError={(e) => {
+                        e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80";
+                      }}
+                    />
+                    {isClay && (
+                      <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#10B981] border-2 border-[#F4F1FA]"></span>
+                    )}
+                    {isNeu && (
+                      <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#38B2AC] border-2 border-[#E0E5EC]"></span>
+                    )}
+                    {isPlayful && (
+                      <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-[#34D399] border border-[#1E293B]"></span>
+                    )}
+                  </div>
 
-              <div className="text-left hidden md:block">
-                <div className={`text-xs tracking-tight line-clamp-1 max-w-[150px] ${
-                  isClay
-                    ? 'font-black text-[#332F3A] font-display'
-                    : isNeu 
-                      ? 'font-bold text-[#3D4852]' 
-                      : 'font-extrabold text-[#1E293B]'
-                }`}>
-                  {currentUser.name}
-                </div>
-                <div className={`text-[11px] truncate max-w-[150px] ${
-                  isClay ? 'text-[#635F69]' : isNeu ? 'text-[#6B7280]' : 'text-slate-500 font-medium'
-                }`}>
-                  {currentUser.nim}
-                </div>
-              </div>
+                  <div className="text-left hidden md:block">
+                    <div className={`text-xs tracking-tight line-clamp-1 max-w-[150px] ${
+                      isClay
+                        ? 'font-black text-[#332F3A] font-display'
+                        : isNeu 
+                          ? 'font-bold text-[#3D4852]' 
+                          : 'font-extrabold text-[#1E293B]'
+                    }`}>
+                      {currentUser.name}
+                    </div>
+                    <div className={`text-[11px] truncate max-w-[150px] ${
+                      isClay ? 'text-[#635F69]' : isNeu ? 'text-[#6B7280]' : 'text-slate-500 font-medium'
+                    }`}>
+                      {currentUser.nim}
+                    </div>
+                  </div>
 
-              <ChevronDown className="w-4 h-4 transition-transform duration-200 text-[#635F69]" />
+                  <ChevronDown className="w-4 h-4 transition-transform duration-200 text-[#635F69] hidden md:block" />
+                </>
+              )}
             </button>
 
             {/* Dropdown Menu Popup */}
             {profileDropdownOpen && (
               <div className={`
-                absolute right-0 mt-2 w-64 origin-top-right p-2 z-50 animate-in fade-in duration-150
+                absolute right-0 mt-2 w-64 origin-top-right p-2 z-50 animate-in fade-in duration-150 shadow-2xl
                 ${isClay
-                  ? 'bg-[#F4F1FA] clay-card rounded-[24px] border border-white/80 shadow-clay-card text-[#332F3A]'
+                  ? '!bg-[#F4F1FA] rounded-[24px] border-2 border-white shadow-2xl text-[#332F3A]'
                   : isNeu
                     ? 'bg-[#E0E5EC] neu-flat rounded-2xl font-dmsans text-[#3D4852]'
                     : isOriginal
@@ -462,12 +492,32 @@ export default function Header({
                 </div>
 
                 <div className="space-y-1">
+                  {/* Notification item for mobile */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProfileDropdownOpen(false);
+                      if (onOpenNotifications) onOpenNotifications();
+                    }}
+                    className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold rounded-xl hover:bg-black/5 transition-colors sm:hidden text-left"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Bell className="w-4 h-4 text-amber-500" />
+                      <span>Notifikasi</span>
+                    </div>
+                    {unreadNotificationCount > 0 && (
+                      <span className="bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                        {unreadNotificationCount}
+                      </span>
+                    )}
+                  </button>
+
                   <a
                     href="#profil"
                     onClick={() => setProfileDropdownOpen(false)}
                     className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold rounded-xl hover:bg-black/5 transition-colors"
                   >
-                    <User className="w-4 h-4 text-[#7C3AED]" />
+                    <User className={`w-4 h-4 ${isOriginal ? 'text-[#3f6ad8]' : 'text-[#7C3AED]'}`} />
                     <span>User Account</span>
                   </a>
 
@@ -476,7 +526,7 @@ export default function Header({
                     onClick={() => setProfileDropdownOpen(false)}
                     className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold rounded-xl hover:bg-black/5 transition-colors"
                   >
-                    <HelpCircle className="w-4 h-4 text-[#7C3AED]" />
+                    <HelpCircle className={`w-4 h-4 ${isOriginal ? 'text-[#3f6ad8]' : 'text-[#7C3AED]'}`} />
                     <span>Info & Bantuan</span>
                   </a>
 

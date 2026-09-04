@@ -117,17 +117,18 @@ export default function LoginPage({ theme = 'original', setTheme, onLogin }) {
           type="button"
           onClick={handleThemeToggle}
           className={`
-            group relative flex items-center gap-2 px-3.5 py-2 text-xs font-bold transition-all focus:outline-none cursor-pointer
+            group relative flex items-center justify-center w-10 h-10 transition-all focus:outline-none cursor-pointer
             ${!hasInteractedTheme ? 'animate-peek ring-2 ring-violet-500/40 shadow-md' : ''}
             ${isClay
-              ? 'clay-btn-secondary rounded-[20px] text-[#332F3A]'
+              ? 'clay-btn-secondary rounded-[16px] text-[#7C3AED]'
               : isNeu
-                ? 'neu-btn rounded-2xl text-[#3D4852]'
+                ? 'neu-btn rounded-xl text-[#6C63FF]'
                 : isOriginal
-                  ? 'bg-white text-slate-700 border border-slate-300 shadow-sm rounded-md hover:bg-slate-50'
-                  : 'bg-[#8B5CF6] text-white border-2 border-[#1E293B] shadow-pop-sm btn-candy rounded-full font-outfit'}
+                  ? 'bg-white text-[#3f6ad8] border border-slate-300 shadow-sm rounded-md hover:bg-slate-50'
+                  : 'bg-[#8B5CF6] text-white border-2 border-[#1E293B] shadow-pop-sm btn-candy rounded-xl'}
           `}
           title="Ganti tema tampilan"
+          aria-label="Pilih tema"
         >
           {/* Pulsing indicator badge if user hasn't interacted yet */}
           {!hasInteractedTheme && (
@@ -137,18 +138,9 @@ export default function LoginPage({ theme = 'original', setTheme, onLogin }) {
             </span>
           )}
 
-          <Palette className={`w-4 h-4 transition-transform duration-300 group-hover:rotate-45 group-hover:scale-110 ${isClay ? 'text-[#7C3AED]' : isNeu ? 'text-[#6C63FF]' : isPlayful ? 'text-white' : 'text-blue-600'}`} />
-          <span className="hidden sm:inline">Tema:</span>
-          <span className="font-extrabold capitalize">
-            {theme === 'original' 
-              ? 'Original (Klasik)' 
-              : theme === 'claymorphism'
-                ? 'Claymorphism'
-                : theme === 'neumorphic' 
-                  ? 'Neumorphic' 
-                  : 'Playful'}
-          </span>
-          <ChevronDown className="w-3.5 h-3.5 opacity-80 transition-transform duration-200 group-hover:translate-y-0.5" />
+          <Palette className={`w-5 h-5 transition-transform duration-300 group-hover:rotate-45 group-hover:scale-110 ${
+            isClay ? 'text-[#7C3AED]' : isNeu ? 'text-[#6C63FF]' : isPlayful ? 'text-white' : 'text-[#3f6ad8]'
+          }`} />
         </button>
 
         {/* Floating Peek Teaser Tooltip */}
@@ -186,9 +178,9 @@ export default function LoginPage({ theme = 'original', setTheme, onLogin }) {
 
         {themeDropdownOpen && (
           <div className={`
-            absolute right-0 mt-2 w-64 p-2 z-50 animate-in fade-in duration-100 shadow-xl
+            absolute right-0 mt-2 w-64 p-2 z-50 animate-in fade-in duration-100 shadow-2xl
             ${isClay
-              ? 'bg-[#F4F1FA] clay-card rounded-[24px] border border-white/80 shadow-clay-card text-[#332F3A]'
+              ? '!bg-[#F4F1FA] rounded-[24px] border-2 border-white shadow-2xl text-[#332F3A]'
               : isNeu
                 ? 'bg-[#E0E5EC] neu-flat rounded-2xl font-dmsans text-[#3D4852]'
                 : isOriginal
